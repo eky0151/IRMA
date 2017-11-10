@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Picbook.Repository.EntityFramework.Entities
 {
-    public partial class Account
+    public partial class Account 
     {
         public Account()
         {

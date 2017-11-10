@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using PicBook.Web.ServerSide;
+using PicBook.Web.ServerSide.Entities;
 
 namespace PicBook.Web
 {
@@ -16,6 +14,7 @@ namespace PicBook.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SerilogConfiguration.ConfigureSerilog();
         }
 
         public IConfiguration Configuration { get; }
@@ -23,7 +22,14 @@ namespace PicBook.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+
+            
+          services.AddIdentity<Account, ApplicationRole>(opts =>
+          {
+            opts.Password.RequiredLength = 6;
+          });
+          services.AddDbContext<PicBookDbContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PicBookDatabase")));
+          services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

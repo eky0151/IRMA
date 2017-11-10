@@ -1,7 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +15,6 @@ namespace Picbook.Repository.EntityFramework.Entities
 {
     public partial class PicBookContext : DbContext
     {
-        private ILogger logger;
         public virtual DbSet<Account> Account { get; set; }
         public virtual DbSet<Album> Album { get; set; }
         public virtual DbSet<Image> Image { get; set; }
@@ -25,9 +30,11 @@ namespace Picbook.Repository.EntityFramework.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(128)
@@ -69,6 +76,7 @@ namespace Picbook.Repository.EntityFramework.Entities
                     .HasMaxLength(24)
                     .IsUnicode(false);
             });
+
 
             modelBuilder.Entity<Album>(entity =>
             {
@@ -190,7 +198,7 @@ namespace Picbook.Repository.EntityFramework.Entities
             }
             catch (DbUpdateException ex)
             {
-                logger.LogError("cannot save changes" + ex.Message);
+                
             }
 
             return Task.FromResult(0);
