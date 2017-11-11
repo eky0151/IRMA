@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PicBook.Web.ServerSide.Entities
 {
-        public partial class Account : IdentityUser<Guid>
+    public class Account : IdentityUser<Guid>
     {
             public Account()
             {
@@ -28,9 +28,9 @@ namespace PicBook.Web.ServerSide.Entities
 
             public ICollection<Album> Album { get; set; }
             public ICollection<Rating> Rating { get; set; }
-        }
+    }
 
-    public partial class Album
+    public  class Album
     {
         public Album()
         {
@@ -52,7 +52,7 @@ namespace PicBook.Web.ServerSide.Entities
         public ICollection<Image> Image { get; set; }
     }
 
-    public partial class Image
+    public  class Image
     {
         public Image()
         {
@@ -79,7 +79,7 @@ namespace PicBook.Web.ServerSide.Entities
         public ICollection<Rating> Rating { get; set; }
     }
 
-    public partial class Rating
+    public  class Rating
     {
         [Key]
         public long Id { get; set; }

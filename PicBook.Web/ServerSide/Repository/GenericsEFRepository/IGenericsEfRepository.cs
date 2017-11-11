@@ -1,11 +1,11 @@
-﻿namespace Picbook.Repository.EntityFramework.GenericsEFRepository
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
-    public interface IGenericsEfRepository<TEntity> : IDisposable  where TEntity : class
+namespace PicBook.Web.ServerSide.Repository.GenericsEFRepository
+{
+  public interface IGenericsEfRepository<TEntity> : IDisposable  where TEntity : class
     {
         Task<int> Count(Expression<Func<TEntity, bool>> predicate);
         Task Create(TEntity entity);

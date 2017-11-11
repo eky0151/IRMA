@@ -1,18 +1,17 @@
-﻿using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PicBook.Web.ServerSide.Entities;
+using PicBook.Web.ServerSide.Repository.GenericsEFRepository;
+using PicBook.Web.ServerSide.Repository.IRepositores;
 
-namespace Picbook.Repository.EntityFramework.Repositories
+namespace PicBook.Web.ServerSide.Repository.Repositories
 {
-    using System;
-    using Entities;
-    using IRepositories;
-    using GenericsEFRepository;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using System.Collections.Generic;
-
-    public class AccountRepository : GenericEfRepository<Account>, IAccountRepository
+    internal class AccountRepository : GenericEfRepository<Account>, IAccountRepository
     {
-        public AccountRepository(PicBookContext ctx)
+        public AccountRepository(PicBookDbContext ctx)
             :base(ctx)
         { }
 

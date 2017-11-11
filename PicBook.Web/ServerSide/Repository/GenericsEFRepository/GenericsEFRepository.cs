@@ -1,19 +1,20 @@
-﻿namespace Picbook.Repository.EntityFramework.GenericsEFRepository
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PicBook.Web.ServerSide.Entities;
 
-    public abstract class GenericEfRepository<TEntity> :  IGenericsEfRepository<TEntity> where TEntity : class
+namespace PicBook.Web.ServerSide.Repository.GenericsEFRepository
+{
+    internal abstract class GenericEfRepository<TEntity> :  IGenericsEfRepository<TEntity> where TEntity : class
     {
-        protected PicBookContext Context;
+        protected readonly PicBookDbContext Context;
+
         private bool _disposedValue;
 
-        protected GenericEfRepository(PicBookContext ctx) => Context = ctx ?? new PicBookContext();
+        protected GenericEfRepository(PicBookDbContext ctx) => Context = ctx ?? throw new ArgumentNullException(nameof(ctx));
 
         public async Task<IReadOnlyCollection<TEntity>> FindAll(Expression<Func<TEntity, bool>> filterExpression)
         {
@@ -22,15 +23,11 @@
 
         public abstract Task<TEntity> GetById(Guid id);
 
-
         public virtual async Task<int> Count(Expression<Func<TEntity, bool>> predicate)
         {
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
-
-            return await Context.Set<TEntity>().CountAsync(predicate);
+          return predicate == null
+            ? throw new ArgumentNullException(nameof(predicate))
+            : await Context.Set<TEntity>().CountAsync(predicate);
         }
 
         public virtual async Task Create(TEntity entity)

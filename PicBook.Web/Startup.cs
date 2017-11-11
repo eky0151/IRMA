@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PicBook.Web.ServerSide;
 using PicBook.Web.ServerSide.Entities;
+using PicBook.Web.ServerSide.Repository.IRepositores;
+using PicBook.Web.ServerSide.Repository.Repositories;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PicBook.Web
 {
@@ -22,14 +25,11 @@ namespace PicBook.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            
-          services.AddIdentity<Account, ApplicationRole>(opts =>
-          {
-            opts.Password.RequiredLength = 6;
-          });
-          services.AddDbContext<PicBookDbContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PicBookDatabase")));
-          services.AddMvc();
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new Info { Title = "PicBook"});});
+            services.AddIdentity<Account, ApplicationRole>(opts => { opts.Password.RequiredLength = 6; });
+            services.AddDbContext<PicBookDbContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PicBookDatabase")));
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,7 +40,9 @@ namespace PicBook.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+          app.UseSwagger();
+          app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "PicBook"); });
+          app.UseMvc();
         }
     }
 }
