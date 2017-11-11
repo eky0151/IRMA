@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PicBook.Web.ServerSide.Entities;
 using PicBook.Web.ServerSide.Repository.IRepositores;
+using PicBook.Web.ServerSide.ViewModels;
 
 namespace PicBook.Web.Controllers
 {
@@ -21,25 +22,25 @@ namespace PicBook.Web.Controllers
       private readonly SignInManager<Account> _signInManager;
        public AccountController(IAccountRepository accountRepository, SignInManager<Account> signInManager, UserManager<Account> userManager)
       {
-        _accountRepository = accountRepository;
-        _signInManager = signInManager;
-        _userManager = userManager;
+        _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+        _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
       }
 
       //TODO: add viewmodels or whatever -> use Account class
       [HttpPost("register")]
       [AllowAnonymous]
-      public async Task<IActionResult> Register([FromBody] dynamic model)
+      public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
       {
-        var acc = new Account()
+        var acc = new Account
         {
-          UserName = model.username,
-          Email = model.email,
-          FirstName = model.firstname,
-          LastName =  model.lastname
+          UserName = model.Username,
+          Email = model.Email,
+          FirstName = model.Firstname,
+          LastName =  model.Lastname
         };
 
-        var suceed = await _userManager.CreateAsync(acc);
+        var suceed = await _userManager.CreateAsync(acc, model.Password);
         if (suceed.Succeeded) return Ok();
 
         return BadRequest();
