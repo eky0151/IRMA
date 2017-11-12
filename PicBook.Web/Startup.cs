@@ -50,20 +50,26 @@ namespace PicBook.Web
       //  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
       //});
 
-          //services.AddAuthentication(options =>
-          //{
-          //  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-          //  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          //}).AddJwtBearer(o =>
-          //{
-          //  // You also need to update /wwwroot/app/scripts/app.js
-          //  o.Authority = Configuration["jwt:authority"];
-          //  o.Audience = Configuration["jwt:audience"];
-          //});
+      //services.AddAuthentication(options =>
+      //{
+      //  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+      //  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      //}).AddJwtBearer(o =>
+      //{
+      //  // You also need to update /wwwroot/app/scripts/app.js
+      //  o.Authority = Configuration["jwt:authority"];
+      //  o.Audience = Configuration["jwt:audience"];
+      //});
 
 
+      services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+      {
+        builder.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+      }));
 
-            services.AddSwaggerGen(c =>
+      services.AddSwaggerGen(c =>
               {
                 c.SwaggerDoc("v1", new Info
                 {
@@ -116,7 +122,10 @@ namespace PicBook.Web
               }
 
 
-              app.UseAuthentication();
+          app.UseCors("MyPolicy");
+
+
+      app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
