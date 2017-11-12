@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using PicBook.Web.ServerSide.Entities;
 using PicBook.Web.ServerSide.Repository.IRepositores;
 using PicBook.Web.ServerSide.ViewModels;
+using PicBook.Web.ServerSide.Extensions;
 
 namespace PicBook.Web.Controllers
 {
@@ -17,34 +18,32 @@ namespace PicBook.Web.Controllers
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
-      private readonly IAccountRepository _accountRepository;
-      private readonly UserManager<Account> _userManager;
-      private readonly SignInManager<Account> _signInManager;
-       public AccountController(IAccountRepository accountRepository, SignInManager<Account> signInManager, UserManager<Account> userManager)
-      {
-        _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
-        _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-      }
+        private readonly IAccountRepository _accountRepository;
+        private readonly UserManager<Account> _userManager;
+        private readonly SignInManager<Account> _signInManager;
 
-      //TODO: add viewmodels or whatever -> use Account class
-      [HttpPost("register")]
-      [AllowAnonymous]
-      public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
-      {
-        var acc = new Account
+        public AccountController(IAccountRepository accountRepository, SignInManager<Account> signInManager, UserManager<Account> userManager)
         {
-          UserName = model.Username,
-          Email = model.Email,
-          FirstName = model.Firstname,
-          LastName =  model.Lastname
-        };
+          _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+          _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+          _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        }
 
-        var suceed = await _userManager.CreateAsync(acc, model.Password);
-        if (suceed.Succeeded) return Ok();
 
-        return BadRequest();
-      }
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userRegistrationAccount = model.AccountFromRegistrationViewmodel();
+
+            var result = await _userManager.CreateAsync(userRegistrationAccount, model.Password);
+
+            if (!result.Succeeded) return BadRequest();
+
+            return new OkResult();
+        }
       
-    }
+      }
 }
